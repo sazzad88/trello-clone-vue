@@ -28,6 +28,20 @@
               </div>
             </div>
           </div>
+
+          <div class="field">
+            <div class="control has-icons-right">
+              <input
+                @keyup.enter="createTask($event, column.tasks)"
+                class="input"
+                type="text"
+                placeholder="Add new task"
+              />
+              <span class="icon is-small is-right">
+                <i class="fas fa-plus"></i>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -50,11 +64,18 @@ export default {
 
   methods: {
     goToTask(id) {
-      //   console.log(id);
       this.$router.push({
         name: "task",
         params: { id },
       });
+    },
+    createTask(e, tasks) {
+      this.$store.commit("CREATE_TASK", {
+        tasks,
+        name: e.target.value,
+      });
+
+      e.target.value = "";
     },
   },
 };
@@ -63,6 +84,12 @@ export default {
 <style scoped>
 * {
   font-family: "Nunito Sans", sans-serif;
+}
+
+.fa,
+.far,
+.fas {
+  font-family: "Font Awesome 5 Free";
 }
 
 .hero-body {

@@ -7,23 +7,23 @@
           <div class="media-content">
             <div class="content">
               <div v-if="task" class="title is-5">
-                {{ task.name }}
+                <!-- {{ task.name }} -->
+                <div class="field">
+                  <input
+                    class="input"
+                    @keyup.enter="updateTask($event, 'name')"
+                    :value="task.name"
+                  />
+                </div>
+                <div class="field">
+                  <textarea
+                    @keyup.enter="updateTask($event, 'description')"
+                    class="textarea"
+                    :value="task.description"
+                  ></textarea>
+                </div>
               </div>
             </div>
-            <nav class="level is-mobile">
-              <div class="level-left">
-                <a class="level-item" aria-label="retweet">
-                  <span class="icon is-small">
-                    <i class="fas fa-retweet" aria-hidden="true"></i>
-                  </span>
-                </a>
-                <a class="level-item" aria-label="like">
-                  <span class="icon is-small">
-                    <i class="fas fa-heart" aria-hidden="true"></i>
-                  </span>
-                </a>
-              </div>
-            </nav>
           </div>
         </article>
       </div>
@@ -42,7 +42,6 @@ export default {
   computed: {
     ...mapGetters(["getTask"]),
     task() {
-      console.log(this.getTask(this.$route.params.id));
       return this.getTask(this.$route.params.id);
     },
   },
@@ -53,8 +52,24 @@ export default {
         name: "board",
       });
     },
+
+    updateTask(e, propertyName) {
+      this.$store.commit("UPDATE_TASK", {
+        task: this.task,
+        key: propertyName,
+        value: e.target.value,
+      });
+
+      this.$router.push({
+        name: "board",
+      });
+    },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.box {
+  background: #f8f5f5;
+}
+</style>
