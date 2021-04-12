@@ -1,17 +1,13 @@
 import Vue from "vue";
 import Vuex from "vuex";
-
+import DefaultDashboard from "./base-board";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    count: 0,
+    board: DefaultDashboard,
   },
-  mutations: {
-    increment(state) {
-      state.count++;
-    },
-  },
+  mutations: {},
 });
 
 export default store;

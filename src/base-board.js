@@ -15,7 +15,7 @@ export default {
         {
           id: uuid(),
           name: "second task",
-          description: "",
+          description: "second task detail",
           userAssigned: null,
         },
         {
