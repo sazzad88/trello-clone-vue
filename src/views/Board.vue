@@ -11,20 +11,51 @@
         </div>
 
         <div class="task-container">
-          <task :key="task.id" :task="task" v-for="task in column.tasks" />
+          <div
+            :key="task.id"
+            v-for="task in column.tasks"
+            class="card row-item"
+            @click="goToTask(task.id)"
+          >
+            <header class="card-header">
+              <p class="card-header-title">
+                {{ task.name }}
+              </p>
+            </header>
+            <div class="card-content" v-if="task.description !== ''">
+              <div class="content small-text">
+                {{ task.description }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <router-view v-if="isTaskOpen" />
     </div>
   </section>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import Task from "./Task.vue";
+
 export default {
-  components: { Task },
   computed: {
     ...mapState(["board"]),
+    isTaskOpen() {
+      //   return false;
+      return this.$route.name == "task";
+    },
+  },
+
+  methods: {
+    goToTask(id) {
+      //   console.log(id);
+      this.$router.push({
+        name: "task",
+        params: { id },
+      });
+    },
   },
 };
 </script>
@@ -73,5 +104,14 @@ export default {
 
 .task-container {
   margin: 5px;
+}
+
+.row-item {
+  margin: 5px 0px;
+  cursor: pointer;
+}
+
+.small-text {
+  font-size: 14px;
 }
 </style>
