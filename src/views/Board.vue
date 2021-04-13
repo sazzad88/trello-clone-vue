@@ -5,6 +5,9 @@
         :key="`${column.name}-${colIndex}`"
         v-for="(column, colIndex) in board.columns"
         class="trello-column"
+        @drop="moveTask($event, column.tasks)"
+        @dragover.prevent
+        @dragenter.prevent
       >
         <div class="title is-5 board-title">
           {{ column.name }}
@@ -12,8 +15,10 @@
 
         <div class="task-container">
           <div
+            draggable="true"
+            @dragstart="pickTask($event, taskIndex, colIndex)"
             :key="task.id"
-            v-for="task in column.tasks"
+            v-for="(task, taskIndex) in column.tasks"
             class="card row-item"
             @click="goToTask(task.id)"
           >
@@ -63,6 +68,23 @@ export default {
   },
 
   methods: {
+    moveTask(e, toTasks) {
+      const fromColumnIndex = e.dataTransfer.getData("from-column-index");
+      const fromTasks = this.board.columns[fromColumnIndex].tasks;
+      const taskIndex = e.dataTransfer.getData("task-index");
+
+      this.$store.commit("MOVE_TASK", {
+        fromTasks,
+        toTasks,
+        taskIndex,
+      });
+    },
+    pickTask(e, taskIndex, fromColumnIndex) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.setData("task-index", taskIndex);
+      e.dataTransfer.setData("from-column-index", fromColumnIndex);
+    },
     goToTask(id) {
       this.$router.push({
         name: "task",
