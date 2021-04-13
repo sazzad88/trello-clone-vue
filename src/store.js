@@ -44,6 +44,14 @@ const store = new Vuex.Store({
         tasks: [],
       });
     },
+    DELETE_TASK(state, { columnIndex, taskIndex }) {
+      let current_tasks = [...state.board.columns[columnIndex].tasks];
+      Vue.set(
+        state.board.columns[columnIndex],
+        "tasks",
+        current_tasks.filter((item, index) => index !== taskIndex)
+      );
+    },
   },
   getters: {
     getTask(state) {

@@ -32,6 +32,12 @@
             <header class="card-header">
               <p class="card-header-title">
                 {{ task.name }}
+                <span
+                  @click.stop="deleteTask(colIndex, taskIndex)"
+                  class="bin icon is-small"
+                >
+                  <i class="far fa-trash-alt"></i>
+                </span>
               </p>
             </header>
             <div class="card-content" v-if="task.description !== ''">
@@ -161,6 +167,12 @@ export default {
 
       e.target.value = "";
     },
+    deleteTask(columnIndex, taskIndex) {
+      this.$store.commit("DELETE_TASK", {
+        columnIndex,
+        taskIndex,
+      });
+    },
   },
 };
 </script>
@@ -225,5 +237,16 @@ export default {
 
 .small-text {
   font-size: 14px;
+}
+
+.bin {
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 5px;
+}
+
+.fa-trash-alt {
+  color: red;
 }
 </style>
