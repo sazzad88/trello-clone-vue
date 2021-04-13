@@ -5,9 +5,11 @@
         :key="`${column.name}-${colIndex}`"
         v-for="(column, colIndex) in board.columns"
         class="trello-column"
-        @drop="moveTask($event, column.tasks)"
+        draggable="true"
+        @drop="moveTaskOrColumn($event, column.tasks, colIndex)"
         @dragover.prevent
         @dragenter.prevent
+        @dragstart.self="pickColumn($event, colIndex)"
       >
         <div class="title is-5 board-title">
           {{ column.name }}
@@ -21,6 +23,11 @@
             v-for="(task, taskIndex) in column.tasks"
             class="card row-item"
             @click="goToTask(task.id)"
+            @dragover.prevent
+            @dragenter.prevent
+            @drop.stop="
+              moveTaskOrColumn($event, column.tasks, colIndex, taskIndex)
+            "
           >
             <header class="card-header">
               <p class="card-header-title">
@@ -68,22 +75,46 @@ export default {
   },
 
   methods: {
-    moveTask(e, toTasks) {
+    pickColumn(e, colIndex) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.setData("column-index", colIndex);
+      e.dataTransfer.setData("type", "column");
+    },
+    moveTaskOrColumn(e, toTasks, toColumnIndex, taskIndex) {
+      const type = e.dataTransfer.getData("type");
+      if (type === "task")
+        this.moveTask(e, toTasks, taskIndex ? taskIndex : toTasks.length);
+      else {
+        this.moveColumn(e, toColumnIndex);
+      }
+    },
+    moveColumn(e, toColumnIndex) {
+      const fromColumnIndex = e.dataTransfer.getData("from-column-index");
+
+      this.$store.commit("MOVE_COLUMN", {
+        fromColumnIndex,
+        toColumnIndex,
+      });
+    },
+    moveTask(e, toTasks, toTaskIndex) {
       const fromColumnIndex = e.dataTransfer.getData("from-column-index");
       const fromTasks = this.board.columns[fromColumnIndex].tasks;
-      const taskIndex = e.dataTransfer.getData("task-index");
+      const taskIndex = e.dataTransfer.getData("from-task-index");
 
       this.$store.commit("MOVE_TASK", {
         fromTasks,
         toTasks,
-        taskIndex,
+        fromTaskIndex: taskIndex,
+        toTaskIndex,
       });
     },
     pickTask(e, taskIndex, fromColumnIndex) {
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.dropEffect = "move";
-      e.dataTransfer.setData("task-index", taskIndex);
+      e.dataTransfer.setData("from-task-index", taskIndex);
       e.dataTransfer.setData("from-column-index", fromColumnIndex);
+      e.dataTransfer.setData("type", "task");
     },
     goToTask(id) {
       this.$router.push({

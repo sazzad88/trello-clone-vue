@@ -4,8 +4,6 @@ import DefaultBoard from "./base-board";
 import { saveStatePlugin, uuid } from "./utils";
 Vue.use(Vuex);
 
-console.log(JSON.parse(localStorage.getItem("board")));
-
 let board = {};
 if (JSON.parse(localStorage.getItem("board"))) {
   board = JSON.parse(localStorage.getItem("board"));
@@ -30,9 +28,15 @@ const store = new Vuex.Store({
     UPDATE_TASK(state, { task, key, value }) {
       Vue.set(task, key, value);
     },
-    MOVE_TASK(state, { fromTasks, toTasks, taskIndex }) {
-      const taskToMove = fromTasks.splice(taskIndex, 1)[0];
-      toTasks.push(taskToMove);
+    MOVE_TASK(state, { fromTasks, toTasks, fromTaskIndex, toTaskIndex }) {
+      const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0];
+      toTasks.splice(toTaskIndex, 0, taskToMove);
+      // toTasks.push(taskToMove);
+    },
+    MOVE_COLUMN(state, { fromColumnIndex, toColumnIndex }) {
+      const columnList = state.board.columns;
+      const columnToMove = columnList.splice(fromColumnIndex, 1)[0];
+      columnList.splice(toColumnIndex, 0, columnToMove);
     },
   },
   getters: {
