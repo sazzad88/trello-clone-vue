@@ -57,6 +57,22 @@
         </div>
       </div>
 
+      <div class="trello-column">
+        <div class="field">
+          <div class="control has-icons-right">
+            <input
+              @keyup.enter="createColumn($event)"
+              class="input"
+              type="text"
+              placeholder="Add new column"
+            />
+            <span class="icon is-small is-right">
+              <i class="fas fa-plus"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
       <router-view v-if="isTaskOpen" />
     </div>
   </section>
@@ -123,8 +139,23 @@ export default {
       });
     },
     createTask(e, tasks) {
+      if (e.target.value.trim() === "") {
+        alert("not valid");
+        return;
+      }
       this.$store.commit("CREATE_TASK", {
         tasks,
+        name: e.target.value,
+      });
+
+      e.target.value = "";
+    },
+    createColumn(e) {
+      if (e.target.value.trim() === "") {
+        alert("not valid");
+        return;
+      }
+      this.$store.commit("CREATE_COLUMN", {
         name: e.target.value,
       });
 
@@ -169,6 +200,7 @@ export default {
   white-space: nowrap;
   background: lightblue;
   border-radius: 8px;
+  overflow-y: auto;
 }
 
 .task {
