@@ -100,7 +100,7 @@ export default {
     pickColumn(e, colIndex) {
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.dropEffect = "move";
-      e.dataTransfer.setData("column-index", colIndex);
+      e.dataTransfer.setData("from-column-index", colIndex);
       e.dataTransfer.setData("type", "column");
     },
     moveTaskOrColumn(e, toTasks, toColumnIndex, taskIndex) {
